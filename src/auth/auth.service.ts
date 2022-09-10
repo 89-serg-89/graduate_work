@@ -10,7 +10,7 @@ export class AuthService {
   ) {  }
 
   async validateUser (email: string): Promise<any> {
-    const user = await this.usersService.findOne(email)
+    const user = await this.usersService.findByEmail(email)
     if (user) {
       const { password, ...result } = user.toObject()
       return result
@@ -19,15 +19,19 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const candidate = await this.usersService.findOne(user.email)
+    const candidate = await this.usersService.findByEmail(user.email)
     if (!candidate) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED)
     }
-    const isValid = this.usersService.compare(user.password, candidate.password)
+    const isValid = this.usersService.compare(user.password, candidate.passwordHash)
     if (!isValid) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED)
     }
-    const payload = { id: candidate._id.toString(), email: candidate.email, firstName: candidate.firstName }
+    const payload = {
+      id: candidate._id.toString(),
+      email: candidate.email,
+      contactPhone: candidate.contactPhone
+    }
     return {
       access_token: this.jwtService.sign(payload)
     }

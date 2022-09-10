@@ -5,25 +5,25 @@ import { HotelRoom, HotelRoomDocument } from './schemas/hotel-room.schema'
 import { IHotelRoomService } from './hotel.interface'
 
 @Injectable()
-export class HotelRoomService implements IHotelRoomService {
+export class HotelRoomService {
   constructor (
     @InjectModel(HotelRoom.name) private HotelRoomModel: Model<HotelRoomDocument>,
     @InjectConnection() private connection: Connection
   ) {  }
 
-  create (data) {
-
-  }
-
-  findById (id) {
-
-  }
-
-  search (params) {
-
-  }
-
-  update (id) {
-
-  }
+  // create (data) {
+  //
+  // }
+  //
+  // findById (id) {
+  //
+  // }
+  //
+  // search (params) {
+  //
+  // }
+  //
+  // update (id) {
+  //
+  // }
 }

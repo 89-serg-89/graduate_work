@@ -1,15 +1,15 @@
 import { IReservation } from './reservation.interface'
 
-export class ReservationService implements IReservation{
-  addReservation (data) {
-
-  }
-
-  removeReservation (id) {
-
-  }
-
-  getReservations (filter) {
-
-  }
+export class ReservationService {
+  // addReservation (data) {
+  //
+  // }
+  //
+  // removeReservation (id) {
+  //
+  // }
+  //
+  // getReservations (filter) {
+  //
+  // }
 }
