@@ -1,9 +1,21 @@
-import { Body, Controller, HttpException, HttpStatus, Post, Get, Res, UseGuards, Req } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Get,
+  Res,
+  UseGuards,
+  Req,
+  SetMetadata
+} from '@nestjs/common'
 import { JoiValidationPipe } from '../pipies/joi-validation.pipe'
 import { createSchema } from './joi/users.schema'
 import { CreateDto } from './dto/users.dto'
 import { UsersService } from './users.service'
 import { JwtAuthGuard } from '../auth/guards/access.guard'
+import { RolesGuard } from '../auth/guards/roles.guard'
 
 @Controller('api')
 export class UsersController {
@@ -33,8 +45,9 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/client/profile')
+  @SetMetadata('roles', ['client'])
   async profile (@Req() req, @Res() res) {
     return req.user
   }

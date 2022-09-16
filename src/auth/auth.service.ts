@@ -33,7 +33,8 @@ export class AuthService {
       contactPhone: candidate.contactPhone
     }
     return {
-      access_token: this.jwtService.sign(payload)
+      access_token: this.jwtService.sign(payload),
+      ...payload
     }
   }
 }
