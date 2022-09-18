@@ -11,7 +11,7 @@ export interface IHotelService {
 export interface SearchRoomsParams {
   limit: number
   offset: number
-  title: string
+  hotel: Types.ObjectId|string
   isEnabled?: true
 }
 

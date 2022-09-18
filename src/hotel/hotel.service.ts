@@ -5,21 +5,27 @@ import { Hotel, HotelDocument } from './schemas/hotel.schema'
 import { IHotelService } from './hotel.interface'
 
 @Injectable()
-export class HotelService{
+export class HotelService implements IHotelService {
   constructor (
     @InjectModel(Hotel.name) private HotelModel: Model<HotelDocument>,
     @InjectConnection() private connection: Connection
   ) {  }
 
-  // create (data) {
-  //
-  // }
-  //
-  // findById (id) {
-  //
-  // }
-  //
-  // search (params) {
-  //
-  // }
+  create (data) {
+    return this.HotelModel.find(data).exec()[0]
+  }
+
+  findById (id) {
+    return this.HotelModel.findById(id).exec()
+  }
+
+  search (params) {
+    return this.HotelModel.find().exec()
+    // return this.HotelModel.find({
+    //   title: { '$regex': params.title, '$options': 'i' },
+    // })
+    //   .skip(params.offset)
+    //   .limit(params.limit)
+    //   .exec()
+  }
 }

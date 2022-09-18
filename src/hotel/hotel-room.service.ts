@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Connection, Model } from 'mongoose'
 import { InjectModel, InjectConnection } from '@nestjs/mongoose'
 import { HotelRoom, HotelRoomDocument } from './schemas/hotel-room.schema'
-import { IHotelRoomService } from './hotel.interface'
+import { IHotelRoomService, SearchRoomsParams } from './hotel.interface'
 
 @Injectable()
 export class HotelRoomService {
@@ -19,9 +19,15 @@ export class HotelRoomService {
   //
   // }
   //
-  // search (params) {
-  //
-  // }
+  search (params: SearchRoomsParams) {
+    return this.HotelRoomModel.find({
+      id: params.hotel,
+      isEnabled: params.isEnabled
+    })
+      .skip(params.offset)
+      .limit(params.limit)
+      .exec()
+  }
   //
   // update (id) {
   //
