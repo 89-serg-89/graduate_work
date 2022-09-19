@@ -2,8 +2,14 @@ import { Types } from 'mongoose'
 import { Hotel } from './schemas/hotel.schema'
 import { HotelRoom } from './schemas/hotel-room.schema'
 
+export interface CreateHotelParams {
+  title: string,
+  description: string
+}
+
 export interface IHotelService {
-  create(data: any): Promise<Hotel>
+  create(data: CreateHotelParams): Promise<Hotel>
+  update(hotel: Hotel, data: CreateHotelParams): Promise<Hotel>
   findById(id: Types.ObjectId|string): Promise<Hotel>
   search(params: Pick<Hotel, "title">): Promise<Hotel[]>
 }

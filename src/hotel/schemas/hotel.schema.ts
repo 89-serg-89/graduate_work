@@ -11,10 +11,10 @@ export class Hotel {
   @Prop()
   description: string
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: new Date() })
   createdAt: Date
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: new Date() })
   updatedAt: Date
 }
 

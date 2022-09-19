@@ -12,7 +12,15 @@ export class HotelService implements IHotelService {
   ) {  }
 
   create (data) {
-    return this.HotelModel.find(data).exec()[0]
+    const hotel = new this.HotelModel(data)
+    return hotel.save()
+  }
+
+  update (hotel, data) {
+    hotel.title = data.title
+    hotel.description = data.description
+    hotel.updatedAt = new Date()
+    return hotel.save()
   }
 
   findById (id) {
@@ -20,12 +28,12 @@ export class HotelService implements IHotelService {
   }
 
   search (params) {
-    return this.HotelModel.find().exec()
-    // return this.HotelModel.find({
-    //   title: { '$regex': params.title, '$options': 'i' },
-    // })
-    //   .skip(params.offset)
-    //   .limit(params.limit)
-    //   .exec()
+    return this.HotelModel.find({
+      title: { '$regex': params?.title || '', '$options': 'i' },
+    })
+      .select('id title description')
+      .skip(params.offset)
+      .limit(params.limit)
+      .exec()
   }
 }
