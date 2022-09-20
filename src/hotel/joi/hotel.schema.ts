@@ -11,6 +11,12 @@ export const searchHotelAdminSchema = Joi.object({
   title: Joi.string().optional()
 })
 
+export const createHotelRoomsAdminSchema = Joi.object({
+  title: Joi.string().optional(),
+  description: Joi.string().optional(),
+  hotelId: Joi.string().required()
+})
+
 export const searchHotelRoomSchema = Joi.object({
   limit: Joi.number().required(),
   offset: Joi.number().required(),

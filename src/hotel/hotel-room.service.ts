@@ -11,10 +11,15 @@ export class HotelRoomService {
     @InjectConnection() private connection: Connection
   ) {  }
 
-  // create (data) {
-  //
-  // }
-  //
+  create (hotel, data, images) {
+    const room = new this.HotelRoomModel({
+      hotel,
+      images,
+      ...data,
+    })
+    return room.save()
+  }
+
   // findById (id) {
   //
   // }

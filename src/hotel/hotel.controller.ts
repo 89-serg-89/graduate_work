@@ -10,8 +10,11 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
-  SetMetadata
+  SetMetadata,
+  UploadedFiles,
+  UseInterceptors, ParseFilePipeBuilder
 } from '@nestjs/common'
+import { FilesInterceptor } from '@nestjs/platform-express'
 import { JoiValidationPipe } from '../pipies/joi-validation.pipe'
 import { JwtAuthGuard } from '../auth/guards/access.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
@@ -19,9 +22,11 @@ import { HotelService } from './hotel.service'
 import { HotelRoomService } from './hotel-room.service'
 import {
   createHotelAdminSchema,
+  createHotelRoomsAdminSchema,
   searchHotelAdminSchema,
   searchHotelRoomSchema
 } from './joi/hotel.schema'
+import { diskStorage } from 'multer'
 
 @Controller('api/')
 export class HotelController {
@@ -29,23 +34,6 @@ export class HotelController {
     private hotelService: HotelService,
     private hotelRoomService: HotelRoomService
   ) {  }
-
-  @Get('common/hotel-rooms')
-  async findAll (
-    @Req() req,
-    @Query(new JoiValidationPipe(searchHotelRoomSchema)) query
-  ) {
-    try {
-      const params = { ...query }
-      const user = req.user
-
-      if (!user || user?.role === 'client') params.isEnabled = true
-
-      return await this.hotelRoomService.search(params)
-    } catch (e) {
-      throw new HttpException(e, HttpStatus.BAD_REQUEST)
-    }
-  }
 
   @Get('/admin/hotels')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -97,6 +85,68 @@ export class HotelController {
         title: hotel.title,
         description: hotel.description
       }
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Post('admin/hotel-rooms')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['admin'])
+  @UseInterceptors(FilesInterceptor(
+    'images',
+    10,
+    {
+      storage: diskStorage({
+        destination: './assets/uploads',
+        filename: (req, file: Express.Multer.File, cb) => {
+          const filenameSplit = file.originalname.split('.')
+          const fileExt = filenameSplit[filenameSplit.length - 1]
+          cb(null, `${Date.now()}.${fileExt}`)
+        }
+      })
+    }
+  ))
+  async createHotelRooms (
+    @Body(new JoiValidationPipe(createHotelRoomsAdminSchema)) body,
+    @UploadedFiles() files: Array<Express.Multer.File>
+  ) {
+    try {
+      const hotel = await this.hotelService.findById(body.hotelId)
+      if (!hotel) {
+        throw new HttpException('there is no hotel with this id', HttpStatus.BAD_REQUEST)
+      }
+      const room = await this.hotelRoomService.create(hotel, body, files.map(i => i.filename))
+
+      return {
+        id: room.id,
+        title: room.title,
+        description: room.description,
+        images: room.images,
+        isEnabled: room.isEnabled,
+        hotel: {
+          id: hotel.id,
+          title: hotel.title,
+          description: hotel.description,
+        }
+      }
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Get('common/hotel-rooms')
+  async findAll (
+    @Req() req,
+    @Query(new JoiValidationPipe(searchHotelRoomSchema)) query
+  ) {
+    try {
+      const params = { ...query }
+      const user = req.user
+
+      if (!user || user?.role === 'client') params.isEnabled = true
+
+      return await this.hotelRoomService.search(params)
     } catch (e) {
       throw new HttpException(e, HttpStatus.BAD_REQUEST)
     }

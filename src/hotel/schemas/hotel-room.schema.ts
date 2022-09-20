@@ -14,15 +14,18 @@ export class HotelRoom {
   hotel: Hotel
 
   @Prop()
+  title: string
+
+  @Prop()
   description: string
 
   @Prop({ default: [] })
   images: string[]
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: new Date() })
   createdAt: Date
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: new Date() })
   updatedAt: Date
 
   @Prop({ required: true, default: true })
