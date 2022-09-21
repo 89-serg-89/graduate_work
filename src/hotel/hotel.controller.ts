@@ -24,7 +24,7 @@ import {
   createHotelAdminSchema,
   createHotelRoomsAdminSchema,
   searchHotelAdminSchema,
-  searchHotelRoomSchema
+  searchHotelRoomSchema, updateHotelRoomsAdminSchema
 } from './joi/hotel.schema'
 import { diskStorage } from 'multer'
 
@@ -117,6 +117,61 @@ export class HotelController {
         throw new HttpException('there is no hotel with this id', HttpStatus.BAD_REQUEST)
       }
       const room = await this.hotelRoomService.create(hotel, body, files.map(i => i.filename))
+
+      return {
+        id: room.id,
+        title: room.title,
+        description: room.description,
+        images: room.images,
+        isEnabled: room.isEnabled,
+        hotel: {
+          id: hotel.id,
+          title: hotel.title,
+          description: hotel.description,
+        }
+      }
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Put('admin/hotel-rooms/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['admin'])
+  @UseInterceptors(FilesInterceptor(
+    'images',
+    10,
+    {
+      storage: diskStorage({
+        destination: './assets/uploads',
+        filename: (req, file: Express.Multer.File, cb) => {
+          const filenameSplit = file.originalname.split('.')
+          const fileExt = filenameSplit[filenameSplit.length - 1]
+          cb(null, `${Date.now()}.${fileExt}`)
+        }
+      })
+    }
+  ))
+  async updateHotelRooms (
+    @Param('id') id: string,
+    @Body(new JoiValidationPipe(updateHotelRoomsAdminSchema)) body,
+    @UploadedFiles() files: Array<Express.Multer.File>
+  ) {
+    try {
+      const findRoom = await this.hotelRoomService.findById(id)
+      if (!findRoom) {
+        throw new HttpException('there is no hotel room with this id', HttpStatus.BAD_REQUEST)
+      }
+      const hotel = await this.hotelService.findById(body.hotelId)
+      if (!hotel) {
+        throw new HttpException('there is no hotel with this id', HttpStatus.BAD_REQUEST)
+      }
+      const room = await this.hotelRoomService.update(
+        findRoom,
+        hotel,
+        body,
+        files.map(i => i.filename)
+      )
 
       return {
         id: room.id,

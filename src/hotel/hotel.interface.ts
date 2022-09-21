@@ -22,8 +22,17 @@ export interface SearchRoomsParams {
 }
 
 export interface IHotelRoomService {
-  create(data: Partial<HotelRoom>): Promise<HotelRoom>
+  create(
+    hotel: Partial<Hotel>,
+    data: Partial<HotelRoom>,
+    images: Array<Express.Multer.File>
+  ): Promise<HotelRoom>
+  update(
+    room: Partial<HotelRoom>,
+    hotel: Partial<Hotel>,
+    data: Partial<HotelRoom>,
+    images: Array<Express.Multer.File>
+  ): Promise<HotelRoom>
   findById(id: Types.ObjectId|string, isEnabled?: true): Promise<HotelRoom>
   search(params: SearchRoomsParams): Promise<HotelRoom[]>
-  update(id: Types.ObjectId|string, data: Partial<HotelRoom>): Promise<HotelRoom>
 }

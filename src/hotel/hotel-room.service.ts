@@ -5,7 +5,7 @@ import { HotelRoom, HotelRoomDocument } from './schemas/hotel-room.schema'
 import { IHotelRoomService, SearchRoomsParams } from './hotel.interface'
 
 @Injectable()
-export class HotelRoomService {
+export class HotelRoomService implements IHotelRoomService {
   constructor (
     @InjectModel(HotelRoom.name) private HotelRoomModel: Model<HotelRoomDocument>,
     @InjectConnection() private connection: Connection
@@ -20,10 +20,20 @@ export class HotelRoomService {
     return room.save()
   }
 
-  // findById (id) {
-  //
-  // }
-  //
+  update (room, hotel, data, images) {
+    room.title = data.title
+    room.description = data.description
+    room.isEnabled = data.isEnabled
+    room.images = [...room.images, ...images]
+    room.hotel = hotel
+    room.updatedAt = new Date()
+    return room.save()
+  }
+
+  findById (id) {
+    return this.HotelRoomModel.findById(id).exec()
+  }
+
   search (params: SearchRoomsParams) {
     return this.HotelRoomModel.find({
       id: params.hotel,
@@ -33,8 +43,4 @@ export class HotelRoomService {
       .limit(params.limit)
       .exec()
   }
-  //
-  // update (id) {
-  //
-  // }
 }
