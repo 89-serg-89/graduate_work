@@ -191,7 +191,7 @@ export class HotelController {
   }
 
   @Get('common/hotel-rooms')
-  async findAll (
+  async findHotelRoomsAll (
     @Req() req,
     @Query(new JoiValidationPipe(searchHotelRoomSchema)) query
   ) {
@@ -202,6 +202,23 @@ export class HotelController {
       if (!user || user?.role === 'client') params.isEnabled = true
 
       return await this.hotelRoomService.search(params)
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Get('common/hotel-rooms/:id')
+  async findHotelRoom (
+    @Req() req,
+    @Param('id') id: string
+  ) {
+    try {
+      const params = { id, isEnabled: undefined }
+      const user = req.user
+
+      if (!user || user?.role === 'client') params.isEnabled = true
+
+      return await this.hotelRoomService.findOne(params)
     } catch (e) {
       throw new HttpException(e, HttpStatus.BAD_REQUEST)
     }

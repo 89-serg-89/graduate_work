@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Connection, Model } from 'mongoose'
+import { Connection, Model, Schema } from 'mongoose'
 import { InjectModel, InjectConnection } from '@nestjs/mongoose'
 import { HotelRoom, HotelRoomDocument } from './schemas/hotel-room.schema'
 import { IHotelRoomService, SearchRoomsParams } from './hotel.interface'
@@ -34,13 +34,21 @@ export class HotelRoomService implements IHotelRoomService {
     return this.HotelRoomModel.findById(id).exec()
   }
 
+  findOne (params) {
+    return this.HotelRoomModel.findOne(params)
+      .select('id title description images hotel')
+      .populate('hotel', 'id title description')
+  }
+
   search (params: SearchRoomsParams) {
     return this.HotelRoomModel.find({
-      id: params.hotel,
-      isEnabled: params.isEnabled
+      isEnabled: params.isEnabled,
+      hotel: params.hotel
     })
-      .skip(params.offset)
-      .limit(params.limit)
+      .select('id title images hotel')
+      .populate('hotel', 'id title')
+      .skip(params.offset || 0)
+      .limit(params.limit || 10)
       .exec()
   }
 }
