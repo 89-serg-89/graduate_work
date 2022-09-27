@@ -12,7 +12,7 @@ import {
   UseGuards,
   SetMetadata,
   UploadedFiles,
-  UseInterceptors, ParseFilePipeBuilder
+  UseInterceptors
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { JoiValidationPipe } from '../pipies/joi-validation.pipe'

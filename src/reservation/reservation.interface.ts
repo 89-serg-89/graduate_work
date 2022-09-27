@@ -10,10 +10,11 @@ export interface ReservationDto {
 }
 
 export interface ReservationSearchOptions {
-  user: Types.ObjectId;
-  dateStart: Date;
-  dateEnd: Date;
+  userId?: Types.ObjectId;
+  dateStart?: Date;
+  dateEnd?: Date;
 }
+
 export interface IReservation {
   addReservation(data: ReservationDto): Promise<Reservation>;
   removeReservation(id: Types.ObjectId|string): Promise<void>;
