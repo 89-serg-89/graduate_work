@@ -104,4 +104,54 @@ export class ReservationController {
       throw new HttpException(e, HttpStatus.BAD_REQUEST)
     }
   }
+
+  @Get('manager/reservations/:userId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['manager'])
+  async listManager (
+    @Param('userId') userId: string
+  ) {
+    try {
+      if (!userId) {
+        throw new HttpException('userId is required', HttpStatus.BAD_REQUEST)
+      }
+      const reservations = await this.reservationService.getReservations({
+        userId
+      })
+      return reservations.map(i => {
+        return {
+          startDate: i.dateStart,
+          endDate: i.dateEnd,
+          hotelRoom: serialize(['title', 'description', 'images'], i.roomId),
+          hotel: serialize(['title', 'description'], i.hotelId)
+        }
+      })
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Delete('manager/reservations/:userId/:reservationId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['manager'])
+  async deleteManager (
+    @Param('userId') userId: string,
+    @Param('reservationId') reservationId: string
+  ) {
+    try {
+      if (!userId || !reservationId) {
+        throw new HttpException('userId, reservationId is required', HttpStatus.BAD_REQUEST)
+      }
+      const reservation = await this.reservationService.findById(reservationId)
+      if (!reservation) {
+        throw new HttpException('reservation not found', HttpStatus.BAD_REQUEST)
+      }
+      if (reservation.userId.toString() !== userId.toString()) {
+        throw new HttpException('reservation user does not match', HttpStatus.FORBIDDEN)
+      }
+      await this.reservationService.removeReservation(reservationId)
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
 }

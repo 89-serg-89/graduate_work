@@ -10,7 +10,7 @@ export interface ReservationDto {
 }
 
 export interface ReservationSearchOptions {
-  userId?: Types.ObjectId;
+  userId?: Types.ObjectId|string;
   dateStart?: Date;
   dateEnd?: Date;
 }
