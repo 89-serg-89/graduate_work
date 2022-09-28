@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { HotelModule } from './hotel/hotel.module'
 import { ReservationModule } from './reservation/reservation.module'
+import { SupportModule } from './support/support.module'
 import { EventsModule } from './events/events.module'
 
 @Module({
@@ -19,6 +20,7 @@ import { EventsModule } from './events/events.module'
     UsersModule,
     HotelModule,
     ReservationModule,
+    SupportModule,
     EventsModule
   ],
   controllers: [AppController],

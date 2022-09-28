@@ -5,7 +5,7 @@ import { Reservation, ReservationDocument } from './schemas/reservation.schema'
 import { IReservation, ReservationSearchOptions } from './reservation.interface'
 
 @Injectable()
-export class ReservationService {
+export class ReservationService implements IReservation{
   constructor (
     @InjectModel(Reservation.name) private ReservationModel: Model<ReservationDocument>,
     @InjectConnection() private connection: Connection

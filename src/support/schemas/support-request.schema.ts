@@ -17,11 +17,14 @@ export class SupportRequest {
   @Prop()
   messages: Message[]
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: new Date() })
   createdAt: Date
 
   @Prop()
   isActive: boolean
+
+  @Prop()
+  hasNewMessages: boolean
 }
 
 export const SupportRequestSchema = SchemaFactory.createForClass(SupportRequest)

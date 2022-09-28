@@ -13,7 +13,7 @@ export class Message {
   })
   author: Users
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: new Date() })
   sentAt: Date
 
   @Prop()

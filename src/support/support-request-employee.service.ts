@@ -1,4 +1,4 @@
-import {ISupportRequestEmployeeService} from './chat.interface'
+import { ISupportRequestEmployeeService } from './support.interface'
 
 export class SupportRequestEmployeeService {
   // markMessagesAsRead (params) {
