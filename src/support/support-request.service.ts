@@ -11,9 +11,15 @@ export class SupportRequestService {
     @InjectConnection() private connection: Connection
   ) {  }
 
-  // findSupportRequests (params) {
-  //
-  // }
+  findSupportRequests (params) {
+    const { limit, offset, ...filter } = params
+    return this.SupportModel.find(filter)
+      .select('id createdAt isActive hasNewMessages')
+      .populate('user', 'id name email contactPhone')
+      .skip(offset || 0)
+      .limit(limit || 10)
+      .exec()
+  }
 
   sendMessage (data) {
     const message = new this.MessageModel(data)
