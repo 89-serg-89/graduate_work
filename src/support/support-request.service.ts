@@ -1,8 +1,9 @@
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
-import { Connection, Model } from 'mongoose'
+import { Connection, Model, Types } from 'mongoose'
 import { SupportRequest, SupportRequestDocument } from './schemas/support-request.schema'
 import { Message, MessageDocument } from './schemas/message.schema'
-import { ISupportRequestService } from './support.interface'
+import { GetMessagesAll, ISupportRequestService, SendMessageDto } from './support.interface'
+import { HttpException, HttpStatus } from '@nestjs/common'
 
 export class SupportRequestService {
   constructor (
@@ -21,15 +22,54 @@ export class SupportRequestService {
       .exec()
   }
 
-  sendMessage (data) {
-    const message = new this.MessageModel(data)
+  findById (id: Types.ObjectId|string) {
+    return this.SupportModel.findById(id)
+      .populate('user')
+      .exec()
+  }
+
+  async sendMessage (data: SendMessageDto) {
+    const support = await this.findById(data.supportRequest)
+    if (!support) {
+      throw new HttpException('there is no support request with this id', HttpStatus.BAD_REQUEST)
+    }
+    if (
+      data.author['role'] === 'client'
+      && support.user['_id'].toString() !== data.author['_id'].toString()
+    ) {
+      throw new HttpException('access denied', HttpStatus.FORBIDDEN)
+    }
+
+    const message = new this.MessageModel({
+      author: data.author,
+      text: data.text,
+      supportRequest: support
+    })
+
+    support.messages.push(message)
+    support.save()
+
     return message.save()
   }
 
-  // getMessages (supportRequest) {
-  //
-  // }
-  //
+  async getMessages (data: GetMessagesAll) {
+    const support = await this.findById(data.supportRequest)
+    if (!support) {
+      throw new HttpException('there is no support request with this id', HttpStatus.BAD_REQUEST)
+    }
+    if (
+      data.user['role'] === 'client'
+      && support.user['_id'].toString() !== data.user['_id'].toString()
+    ) {
+      throw new HttpException('access denied', HttpStatus.FORBIDDEN)
+    }
+    return this.MessageModel.find({
+      supportRequest: support._id
+    })
+      .populate('author', 'id name')
+      .exec()
+  }
+
   // subscribe (handler) {
   //
   // }

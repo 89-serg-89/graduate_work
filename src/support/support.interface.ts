@@ -23,10 +23,15 @@ export interface GetChatListParams {
   isActive: boolean
 }
 
+export interface GetMessagesAll {
+  supportRequest: Types.ObjectId|string,
+  user: Types.ObjectId|string
+}
+
 export interface ISupportRequestService {
   findSupportRequests(params: GetChatListParams): Promise<SupportRequest[]>
   sendMessage(data: SendMessageDto): Promise<Message>
-  getMessages(supportRequest: Types.ObjectId|string): Promise<Message[]>
+  getMessages(data: GetMessagesAll): Promise<Message[]>
   subscribe(
     handler: (supportRequest: SupportRequest, message: Message) => void
   ): () => void

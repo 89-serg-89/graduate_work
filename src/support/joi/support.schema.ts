@@ -4,6 +4,10 @@ export const createSupportRequestClientSchema = Joi.object({
   text: Joi.string().min(3).required()
 })
 
+export const createMessageSchema = Joi.object({
+  text: Joi.string().min(3).required()
+})
+
 export const listSupportRequestClientSchema = Joi.object({
   isActive: Joi.boolean().optional(),
   limit: Joi.number().optional(),
