@@ -13,3 +13,7 @@ export const listSupportRequestClientSchema = Joi.object({
   limit: Joi.number().optional(),
   offset: Joi.number().optional()
 })
+
+export const messagesReadSchema = Joi.object({
+  createdBefore: Joi.date().required()
+})

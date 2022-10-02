@@ -6,7 +6,7 @@ import {
   WsException, WsResponse
 } from '@nestjs/websockets'
 import { Server } from 'socket.io'
-import { JoiValidationPipe } from '../pipies/joi-validation.pipe'
+import { SupportRequestService } from '../support/support-request.service'
 
 @WebSocketGateway({
   cors: {
@@ -17,7 +17,22 @@ export class EventsGateway {
   @WebSocketServer()
   server: Server
 
-  // constructor (private booksCommentsService: BooksCommentsService) {  }
+  constructor (private supportRequestService: SupportRequestService) {  }
+
+  @SubscribeMessage('subscribeToChat')
+  subscribeSupport (
+    @MessageBody() data: string
+  ) {
+    try {
+      console.log(data)
+      return {
+        event: 'test',
+        data: 'test'
+      }
+    } catch (e) {
+      throw new WsException(e)
+    }
+  }
 
   // @SubscribeMessage('getAllComment')
   // async getAllComments (

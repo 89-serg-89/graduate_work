@@ -70,7 +70,7 @@ export class SupportRequestService {
       .exec()
   }
 
-  // subscribe (handler) {
-  //
-  // }
+  subscribe (handler) {
+
+  }
 }

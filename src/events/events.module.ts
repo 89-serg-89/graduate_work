@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { EventsGateway } from './events.gateway'
-// import { BooksCommentsModule } from '../books_comments/books-comments.module'
+import { SupportModule } from '../support/support.module'
 
 @Module({
-  // imports: [
-  //   BooksCommentsModule
-  // ],
+  imports: [
+    SupportModule
+  ],
   providers: [EventsGateway]
 })
 export class EventsModule {  }

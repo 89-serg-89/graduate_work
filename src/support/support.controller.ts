@@ -18,15 +18,17 @@ import { serialize } from '../helpers/utils'
 import {
   createMessageSchema,
   createSupportRequestClientSchema,
-  listSupportRequestClientSchema
+  listSupportRequestClientSchema, messagesReadSchema
 } from './joi/support.schema'
 import { SupportRequestClientService } from './support-request-client.service'
 import { SupportRequestService } from './support-request.service'
+import { SupportRequestEmployeeService } from './support-request-employee.service'
 
 @Controller('api/')
 export class SupportController {
   constructor (
     private supportRequestClientService: SupportRequestClientService,
+    private supportRequestEmployeeService: SupportRequestEmployeeService,
     private supportRequestService: SupportRequestService
   ) {  }
 
@@ -119,6 +121,67 @@ export class SupportController {
         ...serialize(['id', 'sentAt', 'readAt', 'text'], message),
         author: serialize(['_id', 'name'], req.user)
       }
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Post('common/support-requests/:id/messages/read')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['client', 'manager'])
+  async messagesRead (
+    @Req() req,
+    @Param('id') id: string,
+    @Body(new JoiValidationPipe(messagesReadSchema)) body
+  ) {
+    try {
+      if (!id) {
+        throw new HttpException('support request id is required', HttpStatus.BAD_REQUEST)
+      }
+      const service = req.user === 'client'
+        ? this.supportRequestClientService
+        : this.supportRequestEmployeeService
+      await service.markMessagesAsRead({
+        user: req.user,
+        supportRequest: id,
+        createdBefore: body.createdBefore
+      })
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Get('common/support-requests/:id/messages/count')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['client', 'manager'])
+  async countUnreadMessages (
+    @Req() req,
+    @Param('id') id: string
+  ) {
+    try {
+      if (!id) {
+        throw new HttpException('support request id is required', HttpStatus.BAD_REQUEST)
+      }
+      const service = req.user === 'client'
+        ? this.supportRequestClientService
+        : this.supportRequestEmployeeService
+      return await service.getUnreadCount(id)
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @Get('common/support-requests/:id/close')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['manager'])
+  async closeSupport (
+    @Param('id') id: string
+  ) {
+    try {
+      if (!id) {
+        throw new HttpException('support request id is required', HttpStatus.BAD_REQUEST)
+      }
+      return await this.supportRequestEmployeeService.closeRequest(id)
     } catch (e) {
       throw new HttpException(e, HttpStatus.BAD_REQUEST)
     }

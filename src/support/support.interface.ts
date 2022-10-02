@@ -40,11 +40,11 @@ export interface ISupportRequestService {
 export interface ISupportRequestClientService {
   createSupportRequest(data: CreateSupportRequestDto): Promise<SupportRequest>
   markMessagesAsRead(params: MarkMessagesAsReadDto)
-  getUnreadCount(supportRequest: Types.ObjectId|string): Promise<Message[]>
+  getUnreadCount(supportRequest: Types.ObjectId|string): Promise<number>
 }
 
 export interface ISupportRequestEmployeeService {
   markMessagesAsRead(params: MarkMessagesAsReadDto)
-  getUnreadCount(supportRequest: Types.ObjectId|string): Promise<Message[]>
+  getUnreadCount(supportRequest: Types.ObjectId|string): Promise<number>
   closeRequest(supportRequest: Types.ObjectId|string): Promise<void>
 }
