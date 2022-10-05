@@ -12,17 +12,20 @@ export class SupportRequestClientService implements ISupportRequestClientService
   ) {  }
 
   createSupportRequest (data: CreateSupportRequestDto) {
-    const message = new this.MessageModel({
-      author: data.user,
-      text: data.text
-    })
-    message.save()
     const support = new this.SupportModel({
       isActive: true,
       hasNewMessages: true,
-      messages: [message],
+      messages: [],
       user: data.user
     })
+    const message = new this.MessageModel({
+      author: data.user,
+      text: data.text,
+      supportRequest: support
+    })
+    message.save()
+
+    support.messages.push(message)
     return support.save()
   }
 

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
+import { EventEmitterModule } from '@nestjs/event-emitter'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
@@ -15,6 +16,7 @@ import { EventsModule } from './events/events.module'
     ConfigModule.forRoot({
       envFilePath: '.env'
     }),
+    EventEmitterModule.forRoot(),
     MongooseModule.forRoot(process.env.CONNECT_BD),
     AuthModule,
     UsersModule,

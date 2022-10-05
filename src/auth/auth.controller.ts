@@ -14,19 +14,6 @@ export class AuthController {
     private authService: AuthService
   ) {  }
 
-  // @Post('/reg')
-  // async login (
-  //   @Res() res,
-  //   @Body(new JoiValidationPipe(createSchema)) body: CreateDto
-  // ) {
-  //   try {
-  //     await this.usersService.create(body)
-  //     res.status(HttpStatus.CREATED)
-  //   } catch (e) {
-  //     throw new HttpException(e, HttpStatus.BAD_REQUEST)
-  //   }
-  // }
-
   @Post('/login')
   async signIn (
     @Res() res,

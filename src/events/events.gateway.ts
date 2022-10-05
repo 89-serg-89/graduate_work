@@ -1,12 +1,17 @@
 import {
+  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException, WsResponse
+  WsException,
+  WsResponse
 } from '@nestjs/websockets'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 import { SupportRequestService } from '../support/support-request.service'
+import { Req, UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from '../auth/guards/access.guard'
+import { RolesGuard } from '../auth/guards/roles.guard'
 
 @WebSocketGateway({
   cors: {
@@ -21,17 +26,22 @@ export class EventsGateway {
 
   @SubscribeMessage('subscribeToChat')
   subscribeSupport (
-    @MessageBody() data: string
+    @MessageBody() data: string,
+    @ConnectedSocket() client: Socket
   ) {
     try {
       console.log(data)
-      return {
-        event: 'test',
-        data: 'test'
-      }
+      setTimeout(() => {
+        this.send(client)
+      }, 5000)
+      return false
     } catch (e) {
       throw new WsException(e)
     }
+  }
+
+  send (client: Socket) {
+    client.emit('test', { key: 'value' })
   }
 
   // @SubscribeMessage('getAllComment')

@@ -1,12 +1,14 @@
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter'
 import { Connection, Model, Types } from 'mongoose'
 import { SupportRequest, SupportRequestDocument } from './schemas/support-request.schema'
 import { Message, MessageDocument } from './schemas/message.schema'
 import { GetMessagesAll, ISupportRequestService, SendMessageDto } from './support.interface'
 import { HttpException, HttpStatus } from '@nestjs/common'
 
-export class SupportRequestService {
+export class SupportRequestService implements ISupportRequestService{
   constructor (
+    private eventEmmiter: EventEmitter2,
     @InjectModel(SupportRequest.name) private SupportModel: Model<SupportRequestDocument>,
     @InjectModel(Message.name) private MessageModel: Model<MessageDocument>,
     @InjectConnection() private connection: Connection
@@ -49,6 +51,10 @@ export class SupportRequestService {
     support.messages.push(message)
     support.save()
 
+    this.eventEmmiter.emit('support.send-message', {
+      support,
+      message
+    })
     return message.save()
   }
 
@@ -70,7 +76,12 @@ export class SupportRequestService {
       .exec()
   }
 
-  subscribe (handler) {
+  @OnEvent('support.send-message')
+  handleSendMessage (payload) {
+    console.log(payload)
+  }
 
+  subscribe (handler) {
+    handler()
   }
 }

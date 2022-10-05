@@ -34,7 +34,7 @@ export interface ISupportRequestService {
   getMessages(data: GetMessagesAll): Promise<Message[]>
   subscribe(
     handler: (supportRequest: SupportRequest, message: Message) => void
-  ): () => void
+  ): void
 }
 
 export interface ISupportRequestClientService {
