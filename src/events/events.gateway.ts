@@ -9,8 +9,9 @@ import {
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
 import { SupportRequestService } from '../support/support-request.service'
-import { Req, UseGuards } from '@nestjs/common'
+import { Req, SetMetadata, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../auth/guards/access.guard'
+import { WsGuard } from '../auth/guards/ws.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 
 @WebSocketGateway({
@@ -24,13 +25,17 @@ export class EventsGateway {
 
   constructor (private supportRequestService: SupportRequestService) {  }
 
+  @UseGuards(WsGuard, RolesGuard)
+  @SetMetadata('roles', ['client', 'manager'])
   @SubscribeMessage('subscribeToChat')
   subscribeSupport (
+    @Req() req,
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket
   ) {
     try {
       console.log(data)
+      console.log(req.user)
       setTimeout(() => {
         this.send(client)
       }, 5000)
