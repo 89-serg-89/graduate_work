@@ -76,12 +76,7 @@ export class SupportRequestService implements ISupportRequestService{
       .exec()
   }
 
-  @OnEvent('support.send-message')
-  handleSendMessage (payload) {
-    console.log(payload)
-  }
-
   subscribe (handler) {
-    handler()
+    handler
   }
 }
