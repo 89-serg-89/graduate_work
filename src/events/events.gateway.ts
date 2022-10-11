@@ -1,5 +1,4 @@
 import {
-  OnGatewayDisconnect,
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
@@ -8,14 +7,13 @@ import {
   WsException
 } from '@nestjs/websockets'
 import { SetMetadata, UseFilters, UseGuards } from '@nestjs/common'
+import { OnEvent } from '@nestjs/event-emitter'
 import { Server, Socket } from 'socket.io'
 import { WsGuard } from '../auth/guards/ws.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 import { WsExceptionFilter } from '../filters/ws-exception.filter'
 import { SupportRequestService } from '../support/support-request.service'
-import { SupportRequest } from '../support/schemas/support-request.schema'
-import { Message } from '../support/schemas/message.schema'
-import { OnEvent } from '@nestjs/event-emitter'
+import { serialize } from '../helpers/utils'
 
 @WebSocketGateway({
   cors: {
@@ -23,28 +21,19 @@ import { OnEvent } from '@nestjs/event-emitter'
   },
 })
 @UseFilters(WsExceptionFilter)
-export class EventsGateway implements OnGatewayDisconnect {
+export class EventsGateway {
   @WebSocketServer()
   server: Server
-
-  private wsClients = []
 
   constructor (private supportRequestService: SupportRequestService) {  }
 
   @OnEvent('support.send-message')
   handleSendMessage (payload) {
-    // this.handleSendMessage(payload)
-  }
-
-  handleDisconnect (client: Socket): any {
-    const findClientIdx = this.wsClients.findIndex(c => c === client )
-    if (findClientIdx > -1) {
-      this.wsClients.splice(findClientIdx, 1)
-    }
-  }
-
-  handleNewMessage (supportRequest: SupportRequest, message: Message) {
-
+    const { support, message } = payload
+    this.server.to(support.id).emit('newMessage', {
+      ...serialize(['id', 'sentAt', 'readAt', 'text'], message),
+      author: serialize(['_id', 'name'], message.author)
+    })
   }
 
   @UseGuards(WsGuard, RolesGuard)
@@ -54,7 +43,6 @@ export class EventsGateway implements OnGatewayDisconnect {
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket
   ) {
-    this.wsClients.push(client)
     try {
       if (client['user'].role === 'client') {
         const support = await this.supportRequestService.findById(data)
@@ -63,17 +51,9 @@ export class EventsGateway implements OnGatewayDisconnect {
         }
       }
       client.join(data)
-      setTimeout(() => {
-        console.log(client.rooms)
-        client.to(data).emit('test', { key: 'value' })
-      }, 5000)
       return false
     } catch (e) {
       throw new WsException('Something went wrong')
     }
-  }
-
-  send (client: Socket) {
-    client.emit('test', { key: 'value' })
   }
 }

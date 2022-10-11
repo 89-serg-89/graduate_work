@@ -1,0 +1,19 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+#    ports:
+#      - 27018:27017
+    expose:
+      - 27017
+  graduate_work:
+    build: ./
+    container_name: graduate_container
+    ports:
+      - 3002:${PORT}
+    environment:
+      - PORT=${PORT:-3000}
+      - JWT_SECRET=${JWT_SECRET:-secret}
+      - DB_CONNECT=${DB_CONNECT:-mongodb://mongo:27017/graduate_work}
+    depends_on:
+      - mongo

@@ -1,5 +1,5 @@
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Connection, Model, Types } from 'mongoose'
 import { SupportRequest, SupportRequestDocument } from './schemas/support-request.schema'
 import { Message, MessageDocument } from './schemas/message.schema'
@@ -53,7 +53,12 @@ export class SupportRequestService implements ISupportRequestService{
 
     this.eventEmmiter.emit('support.send-message', {
       support,
-      message
+      message: {
+        id: message.id,
+        sentAt: message.sentAt,
+        text: message.text,
+        author: data.author
+      }
     })
     return message.save()
   }
@@ -77,6 +82,6 @@ export class SupportRequestService implements ISupportRequestService{
   }
 
   subscribe (handler) {
-    handler
+    handler()
   }
 }
