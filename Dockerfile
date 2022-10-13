@@ -8,4 +8,4 @@ COPY . .
 RUN npm run prebuild
 RUN npm run build
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:prod"]

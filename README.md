@@ -22,21 +22,21 @@ $ npm run start
 $ npm run start:dev
 
 # production mode
+$ npm run prebuild
+$ npm run build
 $ npm run start:prod
 ```
 
-## Test
+## Docker
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# docker-compose
+$ docker-compose up
 ```
+
+## Ньюансы
+- в переменную "DB_CONNECT" передавать строку ввида "mongodb://localhost:27017/graduate_work"
+- при отправке "subscribeToChat" на подписку новых сообщений, сообщения приходят событием "newMessage"
 
 ## License
 

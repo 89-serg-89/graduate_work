@@ -2,8 +2,8 @@ services:
   mongo:
     image: mongo
     restart: always
-#    ports:
-#      - 27018:27017
+    ports:
+      - 27018:27017
     expose:
       - 27017
   graduate_work:
