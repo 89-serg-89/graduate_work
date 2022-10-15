@@ -8,7 +8,7 @@ import { JoiValidationPipe } from '../pipies/joi-validation.pipe'
 import { signInSchema } from './joi/auth.schema'
 import { AuthService } from './auth.service'
 
-@Controller('api/auth')
+@Controller('/auth')
 export class AuthController {
   constructor (
     private authService: AuthService

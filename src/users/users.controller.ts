@@ -16,13 +16,12 @@ import { RolesGuard } from '../auth/guards/roles.guard'
 import { serialize } from '../helpers/utils'
 import {
   registrationSchema,
-  createAdminSchema,
   listSchema
 } from './joi/users.schema'
 import { CreateDto } from './dto/users.dto'
 import { UsersService } from './users.service'
 
-@Controller('api')
+@Controller()
 export class UsersController {
   constructor (
     private usersService: UsersService
@@ -46,40 +45,7 @@ export class UsersController {
     }
   }
 
-  @Post('admin/users')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @SetMetadata('roles', ['admin'])
-  async createAdmin (
-    @Res() res,
-    @Body(new JoiValidationPipe(createAdminSchema)) body: CreateDto
-  ) {
-    try {
-      const candidate = await this.usersService.findByEmail(body.email)
-      if (candidate) {
-        throw new HttpException('Email is busy', HttpStatus.BAD_REQUEST)
-      }
-      const user = await this.usersService.create(body)
-      res.status(HttpStatus.CREATED)
-      return serialize(['id', 'email', 'name', 'contactPhone', 'role'], user)
-    } catch (e) {
-      throw new HttpException(e, HttpStatus.BAD_REQUEST)
-    }
-  }
-
-  @Get('admin/users')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @SetMetadata('roles', ['admin'])
-  async listAdmin (
-    @Query(new JoiValidationPipe(listSchema)) query
-  ) {
-    try {
-      return await this.usersService.search(query)
-    } catch (e) {
-      throw new HttpException(e, HttpStatus.BAD_REQUEST)
-    }
-  }
-
-  @Get('manager/users')
+  @Get('/manager/users')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['manager'])
   async listManager (

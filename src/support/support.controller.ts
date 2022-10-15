@@ -24,7 +24,7 @@ import { SupportRequestClientService } from './support-request-client.service'
 import { SupportRequestService } from './support-request.service'
 import { SupportRequestEmployeeService } from './support-request-employee.service'
 
-@Controller('api/')
+@Controller()
 export class SupportController {
   constructor (
     private supportRequestClientService: SupportRequestClientService,
@@ -32,7 +32,7 @@ export class SupportController {
     private supportRequestService: SupportRequestService
   ) {  }
 
-  @Post('client/support-requests')
+  @Post('/client/support-requests')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client'])
   async createSupportRequestClient (
@@ -50,7 +50,7 @@ export class SupportController {
     }
   }
 
-  @Get('client/support-requests')
+  @Get('/client/support-requests')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client'])
   async listClient (
@@ -64,7 +64,7 @@ export class SupportController {
     }
   }
 
-  @Get('manager/support-requests')
+  @Get('/manager/support-requests')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['manager'])
   async listManager (
@@ -77,7 +77,7 @@ export class SupportController {
     }
   }
 
-  @Get('common/support-requests/:id/messages')
+  @Get('/common/support-requests/:id/messages')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client', 'manager'])
   async messagesAll (
@@ -100,7 +100,7 @@ export class SupportController {
     }
   }
 
-  @Post('common/support-requests/:id/messages')
+  @Post('/common/support-requests/:id/messages')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client', 'manager'])
   async sendMessage (
@@ -126,7 +126,7 @@ export class SupportController {
     }
   }
 
-  @Post('common/support-requests/:id/messages/read')
+  @Post('/common/support-requests/:id/messages/read')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client', 'manager'])
   async messagesRead (
@@ -151,7 +151,7 @@ export class SupportController {
     }
   }
 
-  @Get('common/support-requests/:id/messages/count')
+  @Get('/common/support-requests/:id/messages/count')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client', 'manager'])
   async countUnreadMessages (
@@ -171,7 +171,7 @@ export class SupportController {
     }
   }
 
-  @Get('common/support-requests/:id/close')
+  @Get('/common/support-requests/:id/close')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['manager'])
   async closeSupport (

@@ -19,14 +19,14 @@ import { ReservationService } from './reservation.service'
 import { createClientSchema } from './joi/reservation.schema'
 import { serialize } from '../helpers/utils'
 
-@Controller('api/')
+@Controller()
 export class ReservationController {
   constructor (
     private reservationService: ReservationService,
     private hotelRoomService: HotelRoomService
   ) {  }
 
-  @Post('client/reservations')
+  @Post('/client/reservations')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client'])
   async createClient (
@@ -58,7 +58,7 @@ export class ReservationController {
     }
   }
 
-  @Get('client/reservations')
+  @Get('/client/reservations')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client'])
   async allClient (
@@ -81,7 +81,7 @@ export class ReservationController {
     }
   }
 
-  @Delete('client/reservations/:id')
+  @Delete('/client/reservations/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['client'])
   async deleteClient (
@@ -105,7 +105,7 @@ export class ReservationController {
     }
   }
 
-  @Get('manager/reservations/:userId')
+  @Get('/manager/reservations/:userId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['manager'])
   async listManager (
@@ -131,7 +131,7 @@ export class ReservationController {
     }
   }
 
-  @Delete('manager/reservations/:userId/:reservationId')
+  @Delete('/manager/reservations/:userId/:reservationId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['manager'])
   async deleteManager (

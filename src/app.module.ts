@@ -10,6 +10,7 @@ import { HotelModule } from './hotel/hotel.module'
 import { ReservationModule } from './reservation/reservation.module'
 import { SupportModule } from './support/support.module'
 import { EventsModule } from './events/events.module'
+import { AdminModule } from './admin/admin.module'
 
 const getUrlConnectDB = () => {
   let url = process.env.DB_CONNECT || 'mongodb://localhost:27017/'
@@ -32,7 +33,8 @@ const getUrlConnectDB = () => {
     HotelModule,
     ReservationModule,
     SupportModule,
-    EventsModule
+    EventsModule,
+    AdminModule
   ],
   controllers: [AppController],
   providers: [AppService]

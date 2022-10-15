@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3005
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+  app.setGlobalPrefix('api')
   app.useGlobalInterceptors(new RequestInterceptor())
   app.useGlobalFilters(new HttpExceptionFilter())
   await app.listen(PORT)
