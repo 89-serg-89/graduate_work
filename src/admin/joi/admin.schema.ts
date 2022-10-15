@@ -22,7 +22,7 @@ export const searchHotelAdminSchema = Joi.object({
 export const createHotelRoomsAdminSchema = Joi.object({
   title: Joi.string().optional(),
   description: Joi.string().optional(),
-  hotelId: Joi.string().required(),
+  hotelId: Joi.string().required()
 })
 
 export const updateHotelRoomsAdminSchema = Joi.object({
