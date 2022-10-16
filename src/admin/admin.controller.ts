@@ -70,6 +70,19 @@ export class AdminController {
     }
   }
 
+  @Get('/user/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', ['admin'])
+  async profile (
+    @Param('id') id: string
+  ) {
+    try {
+      return await this.usersService.findById(id)
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST)
+    }
+  }
+
   @Get('/hotels')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', ['admin'])
